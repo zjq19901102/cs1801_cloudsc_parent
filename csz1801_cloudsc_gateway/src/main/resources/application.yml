@@ -1,0 +1,29 @@
+server:
+  port: 10001
+spring:
+  application:
+    name: api-gateway #指定服务名
+eureka:
+  client:
+    registry-fetch-interval-seconds: 5 # 获取服务列表的周期：5s
+    service-url:
+      defaultZone: http://localhost:8888/eureka
+zuul:
+  #prefix: /api # 添加路由前缀
+  routes:
+    service-user-feign: # 这里是路由id，随意写
+      path: /user/** # 这里是映射路径
+      serviceId: service-user-feign # 指定服务名称
+  ratelimit:
+    key-prefix: your-prefix
+    enabled: true
+    #repository: REDIS # 数量的保顿地址：默认 内存（map）  redis中 jpa 在数据库中
+    behind-proxy: true
+    # 限流策略
+    policies:
+      service-user-feign:
+        limit: 10
+        quota: 20
+        refresh-interval: 60
+        type:
+        - url
